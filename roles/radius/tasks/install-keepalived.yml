@@ -1,0 +1,49 @@
+---
+- name: Radius-keepalived | Test virtual_ip unused,exec ping
+  shell: "ping -c 3 {{ radius.radius_virtual_ip }}"
+  register: ping_result
+  failed_when: false
+  when: inventory_hostname == groups['radius'][0]
+
+- name: Radius-keepalived | Test virtual_ip unused,test ping result
+  debug:
+    msg: "please set virtual_ip to unused ip address"
+  failed_when: true
+  when: inventory_hostname == groups['radius'][0] and ping_result.rc == 0
+
+- name: Radius-keepalived | Install keepalived
+  shell: "yum install -y keepalived"
+
+- name: Radius-keepalived | Master apply keepalived-master.j2
+  template:
+    src: keepalived-master.j2
+    dest: /etc/keepalived/keepalived.conf
+    mode: 0644
+    owner: root
+    group: root
+  when: inventory_hostname == groups['radius'][0]
+
+- name: Radius-keepalived | Master start keepalived.conf server
+  systemd:
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+    name: keepalived
+  when: inventory_hostname == groups['radius'][0]
+
+- name: Radius-keepalived | Slave apply keepalived-backup.j2
+  template:
+    src: keepalived-backup.j2
+    dest: /etc/keepalived/keepalived.conf
+    mode: 0644
+    owner: root
+    group: root
+  when: inventory_hostname == groups['radius'][1] or inventory_hostname == groups['radius'][2]
+
+- name: Radius-keepalived | Slave start keepalived.conf server
+  systemd:
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+    name: keepalived
+  when: inventory_hostname == groups['radius'][1] or inventory_hostname == groups['radius'][2]

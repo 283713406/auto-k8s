@@ -1,0 +1,36 @@
+---
+- name: RADIUS | Copy radius proxy file
+  copy:
+    src: "radius-proxy/{{ item }}"
+    dest: "{{ radius_proxy_dir }}/"
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - default
+    - radiusd.conf
+    - users
+
+- name: RADIUS | Copy radius proxy sql file
+  template:
+    src: radius-proxy-sql.j2
+    dest: "{{ radius_proxy_dir }}/sql"
+    mode: 0755
+    owner: root
+    group: root
+
+- name: RADIUS | Copy radius proxy proxy config file
+  template:
+    src: radius-proxy-proxyconf.j2
+    dest: "{{ radius_proxy_dir }}/proxy.conf"
+    mode: 0755
+    owner: root
+    group: root
+
+- name: RADIUS | Pull radius proxy images
+  shell: "docker pull {{ radiusProxyImage }}"
+
+- name: RADIUS | Run  radius proxy container
+  shell: "docker run  -d --restart always --name radius-proxy -p {{ proxy.port }}:1812/udp -v {{ item }}/users:/etc/freeradius/users -v {{ item }}/proxy.conf:/etc/freeradius/proxy.conf -v {{ item }}/radiusd.conf:/etc/freeradius/radiusd.conf -v {{ item }}/default:/etc/raddb/sites-enabled/default -v {{ item }}/sql:/etc/raddb/mods-enabled/sql {{ radiusProxyImage }} \"-X\""
+  with_items:
+    - "{{ radius_proxy_dir }}"

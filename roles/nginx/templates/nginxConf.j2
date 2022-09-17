@@ -1,0 +1,147 @@
+
+user  nginx;
+worker_processes  {{ ansible_processor_vcpus  }};
+worker_rlimit_nofile {{ ansible_processor_vcpus * 1024 }};
+
+error_log  /var/log/nginx/error.log notice;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  {{ ansible_processor_vcpus * 1024 }};
+}
+
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    include /etc/nginx/conf.d/*.conf;
+}
+
+stream {
+
+    upstream  kim-31443 {
+        server    {{ nginx.kim_master_addr }}:31443;
+    }
+
+    server {
+        listen 31443 ;
+        proxy_connect_timeout 6s;
+        proxy_timeout 5s;
+        proxy_pass  kim-31443;
+    }
+
+    upstream  kim-389 {
+        server    {{ nginx.kim_master_addr }}:389;
+    }
+
+    server {
+        listen 389 ;
+        proxy_connect_timeout 6s;
+        proxy_timeout 5s;
+        proxy_pass  kim-389;
+    }
+
+    upstream  kim-636 {
+        server    {{ nginx.kim_master_addr }}:636;
+    }
+
+    server {
+        listen 636 ;
+        proxy_connect_timeout 6s;
+        proxy_timeout 5s;
+        proxy_pass  kim-636;
+    }
+
+    upstream  kim-88 {
+        server    {{ nginx.kim_master_addr }}:88;
+    }
+
+    server {
+        listen 88 udp;
+        proxy_connect_timeout 6s;
+        proxy_timeout 5s;
+        proxy_pass  kim-88;
+    }
+
+    upstream  kim-464 {
+        server    {{ nginx.kim_master_addr }}:464;
+    }
+
+    server {
+        listen 464 udp;
+        proxy_connect_timeout 6s;
+        proxy_timeout 5s;
+        proxy_pass  kim-464;
+    }
+
+    upstream  kim-53 {
+        server    {{ nginx.kim_master_addr }}:53;
+    }
+
+    server {
+        listen 53 udp;
+        proxy_connect_timeout 6s;
+        proxy_timeout 5s;
+        proxy_pass  kim-53;
+    }
+
+    upstream  ntp-123 {
+        server    {{ nginx.ntp_addr }}:123;
+    }
+
+    server {
+        listen 123 udp;
+        proxy_connect_timeout 6s;
+        proxy_timeout 5s;
+        proxy_pass  ntp-123;
+    }
+
+    upstream  kcm-32044 {
+        server    {{ nginx.base_uri }}:32044;
+    }
+
+    server {
+        listen 32044;
+        proxy_connect_timeout 6s;
+        proxy_timeout 5s;
+        proxy_pass  kcm-32044;
+    }
+
+    upstream  kcm-32045 {
+        server    {{ nginx.base_uri }}:32045;
+    }
+
+    server {
+        listen 32045;
+        proxy_connect_timeout 6s;
+        proxy_timeout 5s;
+        proxy_pass  kcm-32045;
+    }
+
+    upstream  radius-1812 {
+        server    {{ nginx.radius_addr }}:{{ nginx.radius_port }};
+    }
+
+    server {
+        listen 1812 udp;
+        proxy_connect_timeout 6s;
+        proxy_timeout 5s;
+        proxy_pass  radius-1812;
+    }
+
+}	

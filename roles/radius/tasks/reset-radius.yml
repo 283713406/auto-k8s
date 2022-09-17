@@ -1,0 +1,46 @@
+---
+- name: RADIUS | Stop keepalived service
+  service:
+    name: keepalived
+    state: stopped
+  failed_when: false
+  ignore_errors: yes
+
+- name: RADIUS | Remove file
+  file:
+    path: "{{ item }}"
+    state: absent
+  ignore_errors: yes
+  with_items:
+    - "{{ radius_server_dir }}"
+    - "{{ radius_proxy_dir }}"
+    - "{{ radius_otp_dir }}"
+    - /etc/keepalived/keepalived.conf
+
+- name: RADIUS | Kill radius server container
+  shell: "docker kill radius-server"
+  ignore_errors: yes
+
+- name: RADIUS | Kill radius proxy container
+  shell: "docker kill radius-proxy"
+  ignore_errors: yes
+
+- name: RADIUS | Kill radius otp container
+  shell: "docker kill radius-otp"
+  ignore_errors: yes
+  when:
+    - inventory_hostname == groups['radius'][2]
+
+- name: RADIUS | Delete radius server container
+  shell: "docker rm radius-server"
+  ignore_errors: yes
+
+- name: RADIUS | Delete radius proxy container
+  shell: "docker rm radius-proxy"
+  ignore_errors: yes
+
+- name: RADIUS | Delete radius otp container
+  shell: "docker rm radius-otp"
+  ignore_errors: yes
+  when:
+    - inventory_hostname == groups['radius'][2]

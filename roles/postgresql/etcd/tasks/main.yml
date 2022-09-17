@@ -1,0 +1,9 @@
+---
+- name: Postgresql-etcd | install etcd
+  include_tasks: install_etcd.yml
+  when:
+    - install_pg
+- name: Postgresql-etcd | reset etcd
+  include_tasks: reset_etcd.yml
+  when:
+    - uninstall_pg or reset_etcd

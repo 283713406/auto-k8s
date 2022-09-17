@@ -1,0 +1,85 @@
+---
+- name: NGINX-GATEWAY  | Create nginx directory if they don't exist
+  file:
+    path: "{{ nginx_dir }}"
+    state: directory
+    mode: 0775
+  when:
+    - nginx.install_nginx
+
+- name: NGINX-GATEWAY | Generate certificate
+  include_tasks: gen-crt.yml
+  when:
+    - nginx.install_nginx
+
+- name: NGINX-GATEWAY | Set docker logs file size
+  include_tasks: docker-log.yml
+  when:
+    - nginx.install_nginx
+
+- name: NGINX-GATEWAY | Restart docker
+  systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+  when:
+    - nginx.install_nginx
+
+- name: NGINX-GATEWAY | Copy nginx http config file
+  template:
+    src: http.j2
+    dest: "{{ nginx_dir }}/http.conf"
+    mode: 0644
+    owner: root
+    group: root
+  when:
+    - nginx.install_nginx
+
+- name: NGINX-GATEWAY | Copy nginx https config file
+  template:
+    src: https.j2
+    dest: "{{ nginx_dir }}/https.conf"
+    mode: 0644
+    owner: root
+    group: root
+  when:
+    - nginx.install_nginx
+
+- name: NGINX-GATEWAY | Copy master nginx config file
+  template:
+    src: nginxConf.j2
+    dest: "{{ nginx_dir }}/nginx.conf"
+    mode: 0644
+    owner: root
+    group: root
+  when:
+    - "'Master' in inventory_hostname"
+    - nginx.install_nginx
+
+- name: NGINX-GATEWAY | Copy salve nginx config file
+  template:
+    src: nginxSlaveConf.j2
+    dest: "{{ nginx_dir }}/nginx.conf"
+    mode: 0644
+    owner: root
+    group: root
+  when:
+    - "'Slave' in inventory_hostname"
+    - nginx.install_nginx
+
+- name: NGINX-GATEWAY | Pull gateway images
+  shell: "docker pull {{ gateway_image }}"
+  when:
+    - nginx.install_nginx
+
+- name: NGINX-GATEWAY | Run gateway container
+  shell: "docker run -d --restart always --name nginx-icbc --net=host -v {{ item }}/https.conf:/etc/nginx/conf.d/default.conf -v {{ item }}/nginx.conf:/etc/nginx/nginx.conf -v {{ item }}/http.conf:/etc/nginx/conf.d/http.conf -v {{ item }}/crt/:/etc/nginx/crt/ {{ gateway_image }}"
+  with_items:
+    - "{{ nginx_dir }}"
+  when:
+    - nginx.install_nginx
+
+- name: NGINX-GATEWAY | Reset gateway
+  include_tasks: reset-gw.yml
+  when:
+    - nginx.uninstall_nginx

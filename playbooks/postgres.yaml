@@ -1,0 +1,11 @@
+---
+- hosts: postgres
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  gather_facts: true
+  roles:
+    - defaults
+    - { role: postgresql/etcd, tags: pg-alone }
+    - { role: postgresql/pg, tags: pg-alone }
+    - { role: postgresql/patroni, tags: pg-alone }
+    - { role: postgresql/haproxy, tags: pg-alone }
+    - { role: postgresql/keepalived, tags: pg-alone }

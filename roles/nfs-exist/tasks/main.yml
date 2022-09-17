@@ -1,0 +1,10 @@
+---
+- name: FS | Install nfs exist nfs
+  include_tasks: install-nfs-exist.yml
+  when:
+    - nfs_exist.install_fs
+
+- name: FS | Reset nfs if nfs exist
+  include_tasks: reset-nfs.yml
+  when:
+    - nfs_exist.uninstall_fs

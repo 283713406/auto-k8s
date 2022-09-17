@@ -1,0 +1,3 @@
+---
+- name: KylinCloud | Post install
+  shell: echo "Post install"

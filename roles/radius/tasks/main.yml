@@ -1,0 +1,45 @@
+---
+- name: RADIUS | Set docker daemon.json
+  include_tasks: docker.yml
+  when:
+    - radius.install_radius
+
+- name: RADIUS | Restart docker
+  systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+  when:
+    - radius.install_radius
+
+- name: RADIUS | install radius proxy
+  include_tasks: install-radius-proxy.yml
+  when:
+    - radius.install_radius
+
+- name: RADIUS | install radius server
+  include_tasks: install-radius-server.yml
+  when:
+    - radius.install_radius
+
+- name: RADIUS | install radius otp
+  include_tasks: install-radius-otp.yml
+  when:
+    - not radius.otpserver_external
+    - radius.install_radius
+    - inventory_hostname == groups['radius'][2]
+
+- name: RADIUS | Set yum repo
+  include_tasks: repo.yml
+  when:
+    - radius.install_radius
+
+- name: RADIUS | install keepalive for radius
+  include_tasks: install-keepalived.yml
+  when:
+    - radius.install_radius
+
+- name: RADIUS | Reset radius
+  include_tasks: reset-radius.yml
+  when:
+    - radius.uninstall_radius

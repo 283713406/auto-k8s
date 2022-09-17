@@ -1,0 +1,11 @@
+---
+- name: FS | Install glusterfs
+  include_tasks: install-glusterfs.yml
+  when:
+    - glusterfs.install_fs
+
+- name: FS | Reset glusterfs
+  include_tasks: reset-glusterfs.yml
+  when:
+    - glusterfs.uninstall_fs
+

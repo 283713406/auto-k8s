@@ -1,0 +1,7 @@
+---
+- hosts: deploy
+  gather_facts: false
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  roles:
+    - defaults
+    - nfs-exist

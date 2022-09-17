@@ -1,0 +1,9 @@
+---
+- name: Mysql | install mysql
+  include_tasks: install_mysql.yml
+  when:
+    - install_mysql
+- name: Mysql | reset mysql
+  include_tasks: reset_mysql.yml
+  when:
+    - reset_mysql

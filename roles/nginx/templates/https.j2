@@ -1,0 +1,298 @@
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ softshopmanage_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        location / {
+                proxy_set_header Host {{ softshopmanage_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ softshopmanage_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.base_uri }}:30234;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ softshopclient_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        location / {
+                proxy_set_header Host {{ softshopclient_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ softshopclient_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.base_uri }}:30234;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ krmp_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        location / {
+                proxy_set_header Host {{ krmp_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ krmp_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.base_uri }}:30234;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ krmprepo_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        location / {
+                proxy_set_header Host {{ krmprepo_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ krmprepo_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.base_uri }}:30234;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+                rewrite ^/deb/(.*)$ /pulp/content/$1 permanent;
+                rewrite ^/rpm/(.*)$ /pulp/content/$1 permanent;
+                rewrite ^/isos/(.*)$ /pulp/content/$1 permanent;
+        }
+}
+
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ krmpmanage_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        location / {
+                proxy_set_header Host {{ krmpmanage_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ krmpmanage_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.base_uri }}:30234;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ updateweb_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        location / {
+                proxy_set_header Host {{ updateweb_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ updateweb_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.base_uri }}:30234;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ kcm_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        location / {
+                proxy_set_header Host {{ kcm_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ kcm_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.base_uri }}:30234;
+
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ kcmserver_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        location / {
+                proxy_set_header Host {{ kcmserver_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ kcmserver_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.base_uri }}:30234;
+
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ kim_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        location / {
+                proxy_set_header Host {{ kim_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ kim_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.base_uri }}:30234;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ kcmsync_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+
+        location / {
+                proxy_set_header Host {{ kcmsync_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ kcmsync_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.base_uri }}:30234;
+
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ kcmhttpd_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+
+        location / {
+                proxy_set_header Host {{ kcmhttpd_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ kcmhttpd_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.base_uri }}:30234;
+
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30234 ssl;
+        proxy_connect_timeout 6s;
+        server_name {{ verifycode_uri }}.{{ nginx.base_uri }};
+
+        ssl_certificate crt/nginx.crt;
+        ssl_certificate_key crt/nginx.key;
+        ssl_session_timeout 5m;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+
+        location / {
+                proxy_set_header Host {{ verifycode_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_name  {{ verifycode_uri }}.{{ nginx.base_uri }};
+                proxy_ssl_server_name on;
+                proxy_ssl_session_reuse off;
+                proxy_pass  https://{{ nginx.verify_code_addr }}:{{ nginx.verify_code_port }};
+
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}

@@ -1,0 +1,37 @@
+---
+- name: RADIUS | Copy radius otp file
+  copy:
+    src: "radius-opt/{{ item }}"
+    dest: "{{ radius_otp_dir }}/"
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - default
+    - proxy.conf
+    - radiusd.conf
+    - users
+
+- name: RADIUS | Copy radius otp sql file
+  template:
+    src: radius-otp-sql.j2
+    dest: "{{ radius_otp_dir }}/sql"
+    mode: 0755
+    owner: root
+    group: root
+
+- name: RADIUS | Copy radius otp client config file
+  template:
+    src: radius-otp-clientconf.j2
+    dest: "{{ radius_otp_dir }}/clients.conf"
+    mode: 0755
+    owner: root
+    group: root
+
+- name: RADIUS | Pull radius otp images
+  shell: "docker pull {{ radiusProxyImage }}"
+
+- name: RADIUS | Run radius otp container
+  shell: "docker run -d --restart always --name radius-otp -p {{ otpserver_dev.port }}:1812/udp -v {{ item }}/users:/etc/freeradius/users -v {{ item }}/clients.conf:/etc/freeradius/clients.conf -v {{ item }}/proxy.conf:/etc/freeradius/proxy.conf -v {{ item }}/radiusd.conf:/etc/freeradius/radiusd.conf -v {{ item }}/default:/etc/raddb/sites-enabled/default -v {{ item }}/sql:/etc/raddb/mods-enabled/sql {{ radiusOtpImage }}"
+  with_items:
+    - "{{ radius_otp_dir }}"

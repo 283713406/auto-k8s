@@ -1,0 +1,17 @@
+---
+- name: RADIUS | Copy radius otp file
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/"
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - schema.sql
+    - nas.sql
+
+- name: RADIUS | Dbinit
+  shell: "mysql -h {{ radius.mysql.uri }} -P {{ radius.mysql.port }} -u {{ radius.mysql.username }} -p{{ radius.mysql.password }} < /tmp/schema.sql"
+
+- name: RADIUS | Insert whitelist to nas tables
+  shell: "mysql -h {{ radius.mysql.uri }} -P {{ radius.mysql.port }} -u {{ radius.mysql.username }} -p{{ radius.mysql.password }} < /tmp/nas.sql"

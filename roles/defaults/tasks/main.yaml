@@ -1,0 +1,6 @@
+---
+- name: KylinCloud | Configuring defaults
+  debug:
+    msg: "Check roles/kylincloud-defaults/defaults/main.yml"
+  tags:
+    - always

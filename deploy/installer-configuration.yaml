@@ -1,0 +1,85 @@
+---
+apiVersion: kcan.kylincloud.io/v1alpha1
+kind: InstallerConfiguration
+metadata:
+  name: kcan
+  namespace: kylincloud-system
+  labels:
+    version: v3.1.0
+spec:
+  apps:
+    enabled: false
+  bootstrap:
+    enabled: false
+    registries:
+      - ip: "172.20.43.55"
+        name: "registry.kylincloud.org"
+        port: "4001"
+  dbinit:
+    enabled: false
+  glusterfs:
+    enabled: false
+    install_fs: fasle
+    uninstall_fs: false
+    gluster_path: /opt/glusterfs
+  keepalived:
+    enabled: false
+  mysql:
+    enabled: false
+  nfs:
+    enabled: false
+    install_fs: fasle
+    uninstall_fs: false
+  nfs_exist:
+    enabled: false
+    install_fs: false
+    uninstall_fs: false
+    remote_nfs_server: 172.20.188.109
+    remote_nfs_path: /opt/nfs
+  nginx:
+    enabled: false
+    install_nginx: false
+    uninstall_nginx: false
+    base_uri: kylinserver.com
+    vip: 172.20.144.240
+    ntp_addr: 172.20.144.241
+    kim_master_addr: 172.20.144.237
+    kim_slave_addr: 172.20.144.238
+    radius_addr: 172.20.144.240
+    radius_port: 31812
+    verify_code_addr: 122.71.237.189
+    verify_code_port: 16257
+  radius:
+    enabled: false
+    install_radius: false
+    uninstall_radius: false
+    mysql:
+      uri: "172.20.42.90"
+      port: "3306"
+      username: "dbinit"
+      password: "123456"
+    radius1:
+      client_whitelist:
+        host: "*"
+        secret: "netpass"
+    radius2:
+      client_whitelist:
+        host: "*"
+        secret: "netpass"
+    radius3:
+      client_whitelist:
+        host: "*"
+        secret: "netpass"
+    ## 使用外置otp时设置为true，其他设置为false
+    otpserver_external: true
+    otpserver_icbc:
+      ip: "172.20.1.123"
+      port: 1817
+      type: auth
+      secret: "netpass"
+    # radius的keepalived虚拟ip地址，配置为同一网段未使用的IP
+    radius_virtual_ip: 172.20.192.139
+  postgres:
+    enabled: false
+  repo:
+    enabled: false

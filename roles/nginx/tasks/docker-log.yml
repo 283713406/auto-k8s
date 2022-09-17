@@ -1,0 +1,39 @@
+---
+- name: NGINX-GATEWAY | Check for Docker daemon.json
+  stat:
+    path: /etc/docker/daemon.json
+  register: daemon_stat_result
+
+- name: NGINX-GATEWAY | Create Docker daemon.json
+  file: 
+    path: /etc/docker/daemon.json
+    state: touch
+  when: daemon_stat_result.stat.exists == False
+
+- name: NGINX-GATEWAY | Read existing daemon.json
+  slurp:
+    src: /etc/docker/daemon.json
+  register: existing_daemon_content
+  when: daemon_stat_result.stat.exists == True
+
+- name: NGINX-GATEWAY | Parsing json
+  set_fact:
+    existing_daemon: "{{ existing_daemon_content['content'] | b64decode | default({}) }}"
+  when: daemon_stat_result.stat.exists == True
+
+- name: NGINX-GATEWAY | Init daemon.json content (if needed)
+  set_fact:
+    existing_daemon: {}
+  when: daemon_stat_result.stat.exists == False or existing_daemon|length==0
+
+- name: NGINX-GATEWAY | Creating new daemon json content
+  set_fact:
+    new_daemon: "{{ existing_daemon | combine({ 'log-driver': driver, 'log-opts': opts}) }}"
+  when: existing_daemon
+
+- name: NGINX-GATEWAY | Write output to Docker daemon.json
+  copy:
+    content: "{{ new_daemon | to_nice_json }}"
+    dest: /etc/docker/daemon.json
+    backup: true
+  when: existing_daemon

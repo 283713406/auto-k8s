@@ -1,0 +1,7 @@
+---
+- hosts: bootstrap
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  gather_facts: true
+  roles:
+    - defaults
+    - bootstrap

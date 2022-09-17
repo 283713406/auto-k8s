@@ -1,0 +1,13 @@
+---
+- name: GW-reset | Remove file
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ nginx_dir }}"
+
+- name: GW-reset | Kill gateway container
+  shell: "docker kill nginx-icbc"
+
+- name: GW-reset | Delete gateway container
+  shell: "docker rm nginx-icbc"

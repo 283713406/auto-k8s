@@ -1,0 +1,1 @@
+-i /kylincloud/inventory/inventory.ini -e @/kylincloud/config/config.json -e @/kylincloud/config/status.json

@@ -1,0 +1,23 @@
+---
+## 使用客户提供的GLUSTERFS服务场景时
+- name: GLUSTERFS | Delete tianyu directory if they exist
+  file:
+    path: "{{ glusterfs.gluster_path }}/{{ item }}"
+    state: absent
+  with_items:
+    - "{{ tianyu_dir }}"
+
+- name: GLUSTERFS | Delete repo directory if they exist
+  file:
+    path: "{{ glusterfs.gluster_path }}/{{ item }}"
+    state: absent
+  with_items:
+    - "{{ repo_dir }}"
+
+- name: GLUSTERFS | Delete softshop directory if they exist
+  file:
+    path: "{{ glusterfs.gluster_path }}/{{ item }}"
+    state: absent
+  with_items:
+    - "{{ softshop_dir }}"
+

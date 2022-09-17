@@ -1,0 +1,10 @@
+---
+- name: FS | Install nfs
+  include_tasks: install-nfs.yml
+  when:
+    - nfs.install_fs
+
+- name: FS | Reset nfs
+  include_tasks: reset-nfs.yml
+  when:
+    - nfs.uninstall_fs

@@ -1,0 +1,33 @@
+---
+- name: NGINX-GATEWAY  | Create nfs directory if they don't exist
+  file:
+    path: "{{ nginx_dir }}/crt"
+    state: directory
+    mode: 0775
+
+- name: NGINX-GATEWAY  | Copy ca.crt file
+  copy:
+    src: ca.crt
+    dest: "{{ nginx_dir }}/crt/"
+
+- name: NGINX-GATEWAY  | Copy ca.key file
+  copy:
+    src: ca.key
+    dest: "{{ nginx_dir }}/crt/"
+
+- name: NGINX-GATEWAY | Generate nginx.key
+  shell: "openssl genrsa -out nginx.key 2048"
+  args:
+    chdir: "{{ nginx_dir }}/crt/"
+
+- name: NGINX-GATEWAY | Generate nginx.csr
+  shell: "openssl req -new -key nginx.key -out nginx.csr -subj \"/C=CN/ST=Beijing/L=Beijing/O=Example Inc./OU=Web Security/CN=*.{{ item }}\""
+  args:
+    chdir: "{{ nginx_dir }}/crt/"
+  with_items:
+    - "{{ base_uri }}"
+
+- name: NGINX-GATEWAY | Generate nginx.crt
+  shell: "openssl x509 -req -CA ca.crt -CAkey ca.key -days 10950 -in nginx.csr -set_serial 01 -out nginx.crt"
+  args:
+    chdir: "{{ nginx_dir }}/crt/"

@@ -1,0 +1,7 @@
+---
+- hosts: k8s-master
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  gather_facts: true
+  roles:
+    - defaults
+    - keepalived

@@ -1,0 +1,200 @@
+server {
+        listen 32000;
+        proxy_connect_timeout 6s;
+
+        location / {
+                proxy_pass  http://{{ nginx.vip }}:32000;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ softshopmanage_uri }}.{{ nginx.base_uri }};
+
+        location / {
+                proxy_set_header Host {{ softshopmanage_uri }}.{{ nginx.base_uri }};
+                proxy_pass  http://{{ nginx.vip }}:30233;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ softshopclient_uri }}.{{ nginx.base_uri }};
+
+        location / {
+                proxy_set_header Host {{ softshopclient_uri }}.{{ nginx.base_uri }};
+                proxy_pass  http://{{ nginx.vip }}:30233;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ krmp_uri }}.{{ nginx.base_uri }};
+
+        location / {
+                proxy_set_header Host {{ krmp_uri }}.{{ nginx.base_uri }};
+                proxy_pass  http://{{ nginx.vip }}:30233;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ krmprepo_uri }}.{{ nginx.base_uri }};
+
+        location / {
+                proxy_set_header Host {{ krmprepo_uri }}.{{ nginx.base_uri }};
+                proxy_pass  http://{{ nginx.vip }}:30233;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+                rewrite ^/deb/(.*)$ /pulp/content/$1 permanent;
+                rewrite ^/rpm/(.*)$ /pulp/content/$1 permanent;
+                rewrite ^/isos/(.*)$ /pulp/content/$1 permanent;
+        }
+}
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ krmpmanage_uri }}.{{ nginx.base_uri }};
+
+        location / {
+                proxy_set_header Host {{ krmpmanage_uri }}.{{ nginx.base_uri }};
+                proxy_pass  http://{{ nginx.vip }}:30233;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ updateweb_uri }}.{{ nginx.base_uri }};
+
+        location / {
+                proxy_set_header Host {{ updateweb_uri }}.{{ nginx.base_uri }};
+                proxy_pass  http://{{ nginx.vip }}:30233;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ kcm_uri }}.{{ nginx.base_uri }};
+
+        location / {
+                proxy_set_header Host {{ kcm_uri }}.{{ nginx.base_uri }};
+                proxy_pass  http://{{ nginx.vip }}:30233;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ kcmsync_uri }}.{{ nginx.base_uri }};
+
+
+        location / {
+                proxy_set_header Host {{ kcmsync_uri }}.{{ nginx.base_uri }};
+                proxy_pass  http://{{ nginx.vip }}:30233;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ kcmserver_uri }}.{{ nginx.base_uri }};
+
+        location / {
+                proxy_set_header Host {{ kcmserver_uri }}.{{ nginx.base_uri }};
+                proxy_pass  https://{{ nginx.vip }}:30233;
+
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ kim_uri }}.{{ nginx.base_uri }};
+
+        location / {
+                proxy_set_header Host {{ kim_uri }}.{{ nginx.base_uri }};
+                proxy_pass  https://{{ nginx.vip }}:30233;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ kcmhttpd_uri }}.{{ nginx.base_uri }};
+
+
+        location / {
+                proxy_set_header Host {{ kcmhttpd_uri }}.{{ nginx.base_uri }};
+                proxy_pass  http://{{ nginx.vip }}:30233;
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}
+
+server {
+        listen 30233;
+        proxy_connect_timeout 6s;
+        server_name {{ verifycode_uri }}.{{ nginx.base_uri }};
+
+        location / {
+                proxy_set_header Host {{ verifycode_uri }}.{{ nginx.base_uri }};
+                proxy_pass  http://{{ nginx.verify_code_addr }}:{{ nginx.verify_code_port }};
+
+                client_max_body_size            4g;
+                proxy_connect_timeout           3600;
+                proxy_send_timeout              3600;
+                proxy_read_timeout              3600;
+        }
+}

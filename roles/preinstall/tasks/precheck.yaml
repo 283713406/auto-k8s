@@ -1,0 +1,31 @@
+---
+- name: PreInstall | Ssh init
+  shell: "rm -rf ~/.ssh/* &&  echo {{item.key}} {{item.value.ansible_host}}  >> /etc/hosts"
+  with_dict:
+  - "{{ hostvars }}"
+
+- name: PreInstall | Generate new key
+  shell: "ssh-keygen -t rsa -b 2048 -P \"\" -f ~/.ssh/id_rsa"
+
+- name: PreInstall | Copy remote key to local
+  fetch:
+    src: ~/.ssh/id_rsa.pub
+    dest: ~/.ssh/rsa/
+    force: yes
+
+- name: PreInstall | Sync certificate
+  copy:
+    src: ~/.ssh/rsa
+    dest: ~/.ssh/
+    mode: 0644
+
+- name: PreInstall | Merge key
+  shell: "cat ~/.ssh/rsa/*/root/.ssh/id_rsa.pub > ~/.ssh/authorized_keys"
+
+- name: PreInstall | Add known hosts
+  shell: "ssh-keyscan {{item}} >> /root/.ssh/known_hosts"
+  with_items:
+  - "{{ play_hosts }}"
+
+- name: PreInstall | Clean up temporary data
+  shell: "rm -rf  ~/.ssh/rsa && echo \"end\""

@@ -1,0 +1,36 @@
+---
+- name: GLUSTERFS | Create tianyu directory
+  file:
+    path: "{{ glusterfs.gluster_path }}/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+  with_items:
+    - "{{ tianyu_dir }}"
+
+- name: GLUSTERFS | Extract apt-data.tar.gz 
+  unarchive:
+    src: "apt-data.tar.gz"
+    dest: "{{ glusterfs.gluster_path }}/data/"
+
+- name: GLUSTERFS | Create repo directory if they don't exist
+  file:
+    path: "{{ glusterfs.gluster_path }}/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0777
+  with_items:
+    - "{{ repo_dir }}"
+
+- name: GLUSTERFS | Create softshop directory if they don't exist
+  file:
+    path: "{{ glusterfs.gluster_path }}/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0777
+  with_items:
+    - "{{ softshop_dir }}"
+

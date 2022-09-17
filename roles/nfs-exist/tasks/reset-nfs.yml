@@ -1,0 +1,47 @@
+---
+## 使用客户提供的NFS服务场景时
+- name: NFS | Mount nfs directory
+  mount:
+    src: "{{ nfs_exist.remote_nfs_server }}:{{ nfs_exist.remote_nfs_path }}"
+    path: "{{ nfs_dir }}"
+    state: mounted
+    fstype: nfs
+  when: nfs_exist
+
+- name: NFS | Delete tianyu directory if they don't exist
+  file:
+    path: "{{ nfs_dir }}/{{ item }}"
+    state: absent
+  with_items:
+    - "{{ tianyu_dir }}"
+  when: nfs_exist
+
+- name: NFS | Delete repo directory if they don't exist
+  file:
+    path: "{{ nfs_dir }}/{{ item }}"
+    state: absent
+  with_items:
+    - "{{ repo_dir }}"
+  when: nfs_exist
+
+- name: NFS | Delete softshop directory if they don't exist
+  file:
+    path: "{{ nfs_dir }}/{{ item }}"
+    state: absent
+  with_items:
+    - "{{ softshop_dir }}"
+  when: nfs_exist
+
+- name: NFS | Unmount nfs directory
+  mount:
+    src: "{{ nfs_exist.remote_nfs_server }}:{{ nfs_exist.remote_nfs_path }}"
+    path: "{{ nfs_dir }}"
+    state: unmounted
+    fstype: nfs
+  when: nfs_exist
+
+- name: NFS | Delete template nfs directory
+  file:
+    path: "{{ nfs_dir }}"
+    state: absent
+  when: nfs_exist

@@ -1,0 +1,156 @@
+## global
+kylincloud_dir: /kylincloud/kylincloud
+kube_config_dir: /etc/kubernetes
+kube_cert_dir: "{{ kube_config_dir }}/ssl"
+kube_addons_dir: "{{ kube_config_dir }}/addons"
+# Directory where the binaries will be installed
+bin_dir: /usr/local/bin
+docker_bin_dir: /usr/bin
+etcd_data_dir: /var/lib/etcd
+
+## bootstrap
+# 备份后需要恢复的文件
+backup_files:
+  - "/etc/hosts"
+  - "/etc/systemd/system/docker.service.d/docker-options.conf"
+  - "/etc/docker/daemon.json"
+
+## nfs and glusterfs
+nfs_dir: /opt/nfs
+tianyu_dir:
+  - data/log
+  - data/crt
+  - data/apt-data
+  - data/ipa
+  - data/kim-sync
+  - data/.ssh
+repo_dir:
+  - psql/psql-data-0
+  - psql/psql-data-1
+  - psql/psql-data-2
+  - krmp/dynflow-data
+  - krmp/repo-data
+  - krmp/repo-conf
+  - krmp/repo-data/assets
+  - krmp/repo-data/media
+  - krmp/repo-data/tmp
+  - krmp/repo-data/media/artifact
+  - krmp/repo-data/media/upload
+  - krmp/repo-conf/tmp
+softshop_dir:
+  - manage/package
+
+## registies
+# 根据环境情况修改对应的镜像仓库配置
+registries:
+  # 麒麟容器云应用组件镜像仓库，请修改服务所在节点IP地址
+  - ip: "172.20.43.55"
+    name: "registry.kylincloud.org"
+    port: "4001"
+
+## dbinit
+# 使用k8s外部MySQL时， is_external 设置为true
+# 提供的用户需要有所有的权限
+maxscale_user: "dbinit"
+maxscale_pwd: "123456"
+maxscale_port: "3306"
+is_external: false
+mysql_uri: "127.0.0.1"
+mysql_port: "3306"
+mysql_user: "dbuser"
+mysql_pwd: "dbpwd"
+# 需要初始化的模块设置为true
+tianyu: true
+mirrors_update: true
+softshop: true
+
+## keepalived
+#keepalived虚拟ip地址，配置为同一网段未使用的IP
+package: "/root/psql-{{ host_architecture }}.tar.gz"
+untar_package_dir: /opt/postgresql/package
+keepalived_dir: /home/postgres
+virtual_ip: 172.20.192.139
+virtual_router_id: 66
+reset_keepalived: false
+install_keepalived: false
+
+## mysql
+install_mysql: false
+reset_mysql: false
+#数据库所有权限账号
+dbinit_user: dbinit
+dbinit_password: 123456
+#maxscale监控账号
+maxscale_monitor_user: maxscale_monitor
+maxscale_monitor_password: 123456
+#maxscale路由账号
+maxscale_route_user: maxscale_route
+maxscale_route_password: 123456
+
+## nginx
+nginx_dir: /opt/nginx
+gateway_image: registry.kylincloud.org:4001/solution/tianyu/arm64/nginx:1.20.2
+softshopmanage_uri: softshopmanage
+softshopclient_uri: softshopclient
+krmp_uri: krmp
+krmprepo_uri: krmprepo
+krmpmanage_uri: krmpmanage
+updateweb_uri: updateweb
+kcm_uri: kcm
+kcmsync_uri: kcmsync
+kcmserver_uri: kcmserver
+kim_uri: kim
+kcmhttpd_uri: kcmhttpd
+verifycode_uri: verifycode
+
+## postgres
+_host_architecture_groups:
+  x86_64: amd64
+  aarch64: arm64
+  armv7l: arm
+host_architecture: >-
+  {%- if ansible_architecture in _host_architecture_groups -%}
+  {{ _host_architecture_groups[ansible_architecture] }}
+  {%- else -%}
+  {{ ansible_architecture }}
+  {%- endif -%}
+#外部的etcd地址，如192.168.0.1:2379
+#out_etcd_address:
+install_pg: false
+uninstall_pg: false
+reset_etcd: false
+reset_pg: false
+reset_patroni: false
+reset_haproxy: false
+
+## radius
+radius_server_dir: /opt/radius-server
+radius_proxy_dir: /opt/radius-proxy
+radius_otp_dir: /opt/radius-otp
+radiusOtpImage: "registry.kylincloud.org:4001/solution/ha/radius/arm64/freeradius:3.0.25"
+radiusProxyImage: "registry.kylincloud.org:4001/solution/ha/radius/arm64/freeradius:3.0.25.1"
+radiusServerImage: "registry.kylincloud.org:4001/solution/ha/radius/arm64/kylinradius:1.0.1"
+driver: json-file
+opts:  {"max-size":"50m", "max-file":"3"}
+baseurl: 'http://{{ hostvars["deploy"]["ansible_host"] }}:8080/'
+proxy:
+  backend:
+    port: 11812
+  ip: "*"
+  port: 1812
+  balance_type: "fail-over"
+  client_whitelist:
+    host: "*"
+    secret: "netpass"
+serverLocal:
+  port: 1812
+  secret: "netpass"
+backend:
+  Cleartext_Password: "kylinos123"
+otpserver_dev:
+  port: 21812
+  secret: "netpass"
+  type: "auth"
+  client_whitelist:
+    host: "*"
+    secret: "netpass"
